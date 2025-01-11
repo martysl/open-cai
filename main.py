@@ -38,8 +38,8 @@ INDEX_HTML = """
 </head>
 <body>
     <div class="container">
-        <h1>Open-cai</h1>
-        <p>by Marty with ♥ and little TasiaGPT</p>
+        <h1 style="color: red">Open-cai</h1>
+        <p><small>Made by TasiaGPT and Marty with ♥ </small></p>
     </div>
 </body>
 </html>
@@ -100,22 +100,24 @@ async def safe_send_message(client, character_id, chat_id, message, max_retries=
 
 @app.route('/v1/images/generations', methods=['POST'])
 async def image_generation():
-    data = request.json  # Removed the 'await' here
-    print(f"Received data: {data}")  # Debugging incoming data
+    data = await request.get_json()
     if not data or 'prompt' not in data:
         return jsonify({"error": "Invalid request"}), 400
 
     prompt = data['prompt']
-    
-    # Get token from the environment variable
     token = os.getenv('CHARACTERAI_AUTH_TOKEN')
-    if not token:
-        return jsonify({"error": "API token not found"}), 400
 
     try:
         client = await get_client(token=token)
         images = await client.utils.generate_image(prompt)
+
+        # Print each URL (for debugging/logging)
+        for image_url in images:
+            print(image_url)
+
         await client.close_session()
+
+        # Return all image URLs as JSON
         return jsonify({"images": images}), 200
 
     except Exception as e:
