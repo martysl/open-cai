@@ -11,9 +11,11 @@ We not provide auth token you need got your own see how [here](https://github.co
 - Environment variable support for secure token management
 
 ## Getting Started (localy)
-📦 1. Clone the Repository:
-git clone https://github.com/martysl/cai
+📦 1. Clone the Repository:  
+```
+git clone https://github.com/martysl/cai  
 cd cai
+```
 📋 2. Requirements
 Install the necessary packages:
 ```
