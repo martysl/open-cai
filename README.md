@@ -3,7 +3,7 @@
 **This project provides an OpenAI-style API endpoint to interact with Character.AI using the PyCharacterAI library. The API mimics OpenAI’s /v1/chat/completions endpoint, allowing developers to send and receive messages from Character.AI bots**.
 
 >[!NOTE]
->We not provide auth token you need got your own see how [here](https://github.com/Xtr4F/PyCharacterAI)  
+>We not provide auth token you need got your own see how [here](https://github.com/Xtr4F/PyCharacterAI/issues/12)  
 
 ## Features:  
 - [x] OpenAI-style endpoint (/v1/chat/completions)
