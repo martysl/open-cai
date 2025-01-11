@@ -1,24 +1,11 @@
-#import stuff
-import os
 import asyncio
+import os
 from flask import Flask, request, jsonify, render_template_string
 from PyCharacterAI import get_client
-from PyCharacterAI.exceptions import SessionClosedError
-from dotenv import load_dotenv
-
-# Load environment variables from .env file
-load_dotenv()
+from PyCharacterAI.exceptions import SessionClosedError, RequestError
 
 app = Flask(__name__)
 
-# Store session client and chat data
-clients = {}
-chats = {}
-
-# Initialize the CharacterAI client
-async def init_client(token):
-    return await get_client(token=token)
-# HTML for the index page
 INDEX_HTML = """
 <!DOCTYPE html>
 <html lang="en">
@@ -28,99 +15,89 @@ INDEX_HTML = """
     <title>Open-cai</title>
     <style>
         body {
-            margin: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
         .container {
             text-align: center;
         }
         h1 {
-            font-size: 60px;
+            font-size: 48px;
             margin: 0;
-            color: #ff4444;
         }
         p {
             font-size: 18px;
-            color: #aaa;
-            margin-top: 10px;
-        }
-        p span {
-            color: #ff4444;
+            color: gray;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Open-cai</h1>
-        <p>by Marty with <span>♥</span> and TasiaGpt</p>
+        <p>by Marty with ♥ and little TasiaGPT</p>
     </div>
 </body>
 </html>
 """
 
-
 @app.route('/')
 def index():
     return render_template_string(INDEX_HTML)
-# openapi app code
+
 @app.route('/v1/chat/completions', methods=['POST'])
-def chat_completions():
+async def chat_completions():
     data = request.json
-    token = os.getenv('CHARACTERAI_AUTH_TOKEN')
-    
-    if not token:
-        return jsonify({"error": "CHARACTERAI_AUTH_TOKEN is missing from environment."}), 400
+    if not data or 'prompt' not in data or 'character_id' not in data:
+        return jsonify({"error": "Invalid request"}), 400
 
-    # Get CharacterID and messages
-    character_id = data.get('model')
-    messages = data.get('messages')
+    character_id = data['character_id']
+    prompt = data['prompt']
+    token = os.getenv('CAI_TOKEN')
 
-    if not character_id or not messages:
-        return jsonify({"error": "Missing 'model' or 'messages'"}), 400
-
-    # Retrieve session or create a new one
-    if character_id not in clients:
-        client = asyncio.run(init_client(token))  # Use asyncio.run() here for a new loop
-        clients[character_id] = client
-        chat, greeting_message = asyncio.run(client.chat.create_chat(character_id))  # Run async functions
-        chats[character_id] = chat
-
-        # Send the initial greeting message
-        greeting = greeting_message.get_primary_candidate().text
-        return jsonify({
-            "id": chat.chat_id,
-            "model": character_id,
-            "message": greeting
-        })
-
-    client = clients[character_id]
-    chat = chats[character_id]
-
-    # Send user message to the character
     try:
-        user_message = messages[-1]['content']
-        answer = asyncio.run(client.chat.send_message(character_id, chat.chat_id, user_message))  # Use asyncio.run() here
-        response_text = answer.get_primary_candidate().text
-
-        return jsonify({
-            "id": chat.chat_id,
-            "model": character_id,
-            "message": response_text
-        })
-
-    except SessionClosedError:
-        return jsonify({"error": "Session closed. Please start a new chat."}), 400
+        client = await get_client(token=token)
+        chat, greeting_message = await client.chat.create_chat(character_id)
+        response_message = await safe_send_message(client, character_id, chat.chat_id, prompt)
+        await client.close_session()
+        return jsonify({"response": response_message}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+async def safe_send_message(client, character_id, chat_id, message, max_retries=5):
+    retries = 0
+    while retries < max_retries:
+        try:
+            answer = await client.chat.send_message(character_id, chat_id, message)
+            return answer.get_primary_candidate().text
+        except (RequestError, ConnectionResetError):
+            retries += 1
+            await asyncio.sleep(2 ** retries)  # Exponential backoff
+    raise RequestError("Failed to send message after multiple retries")
+
+@app.route('/v1/images/generations', methods=['POST'])
+async def image_generation():
+    data = request.json
+    if not data or 'prompt' not in data:
+        return jsonify({"error": "Invalid request"}), 400
+
+    prompt = data['prompt']
+    token = os.getenv('CAI_TOKEN')
+
+    try:
+        client = await get_client(token=token)
+        images = await client.utils.generate_image(prompt)
+        await client.close_session()
+        return jsonify({"images": images}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(port=5000)
+    app.run(debug=True)
