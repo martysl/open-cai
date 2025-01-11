@@ -48,7 +48,24 @@ INDEX_HTML = """
 @app.route('/')
 def index():
     return render_template_string(INDEX_HTML)
+@app.route('/v1/images/generations', methods=['POST'])
+async def image_generation():
+    data = request.json
+    if not data or 'prompt' not in data:
+        return jsonify({"error": "Invalid request"}), 400
 
+    prompt = data['prompt']
+    token = os.getenv('CHARACTERAI_AUTH_TOKEN')
+
+    try:
+        client = await get_client(token=token)
+        images = await client.utils.generate_image(prompt)
+        await client.close_session()
+        return jsonify({"images": images}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+        
 @app.route('/v1/chat/completions', methods=['POST'])
 async def chat_completions():
     data = request.json  # Removed the 'await' here
