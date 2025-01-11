@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, jsonify
 from PyCharacterAI import get_client
+from PyCharacterAI import Client
 from dotenv import load_dotenv
 import asyncio
 
