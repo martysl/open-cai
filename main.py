@@ -35,10 +35,9 @@ def chat_completions():
 
     # Retrieve session or create a new one
     if character_id not in clients:
-        loop = asyncio.get_event_loop()
-        client = loop.run_until_complete(init_client(token))
+        client = asyncio.run(init_client(token))  # Use asyncio.run() here for a new loop
         clients[character_id] = client
-        chat, greeting_message = loop.run_until_complete(client.chat.create_chat(character_id))
+        chat, greeting_message = asyncio.run(client.chat.create_chat(character_id))  # Run async functions
         chats[character_id] = chat
 
         # Send the initial greeting message
@@ -55,7 +54,7 @@ def chat_completions():
     # Send user message to the character
     try:
         user_message = messages[-1]['content']
-        answer = asyncio.run(client.chat.send_message(character_id, chat.chat_id, user_message))
+        answer = asyncio.run(client.chat.send_message(character_id, chat.chat_id, user_message))  # Use asyncio.run() here
         response_text = answer.get_primary_candidate().text
 
         return jsonify({
@@ -72,4 +71,4 @@ def chat_completions():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0",port=5000)
+    app.run(port=5000)
