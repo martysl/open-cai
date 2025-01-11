@@ -36,7 +36,7 @@ Your API will be running at:
 http://localhost:5000/v1/chat/completions
 ```
 ## 📡 Deploy on Vercel
-🔧 1. Use Webpage interface add project using repo: https://github.com/martysl/cai  
+🔧 1. Use Webpage interface add project using repo: https://github.com/martysl/open-cai  
 🚀 2. Deploy to Vercel  
 🔐 3. Set Environment Variables on Vercel  
 - Go to your Vercel Dashboard.  
