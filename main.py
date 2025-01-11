@@ -1,4 +1,3 @@
-import asyncio
 import os
 from flask import Flask, request, jsonify, render_template_string
 from PyCharacterAI import get_client
@@ -52,7 +51,7 @@ def index():
 
 @app.route('/v1/chat/completions', methods=['POST'])
 async def chat_completions():
-    data = await request.json
+    data = request.json  # Removed the 'await' here
     print(f"Received data: {data}")  # Debugging incoming data
 
     if not data or 'prompt' not in data or 'character_id' not in data:
@@ -101,7 +100,7 @@ async def safe_send_message(client, character_id, chat_id, message, max_retries=
 
 @app.route('/v1/images/generations', methods=['POST'])
 async def image_generation():
-    data = await request.json
+    data = request.json  # Removed the 'await' here
     print(f"Received data: {data}")  # Debugging incoming data
     if not data or 'prompt' not in data:
         return jsonify({"error": "Invalid request"}), 400
