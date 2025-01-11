@@ -13,7 +13,7 @@ We not provide auth token you need got your own see how [here](https://github.co
 ## Getting Started (localy)
 📦 1. Clone the Repository:  
 ```
-git clone https://github.com/martysl/cai  
+git clone https://github.com/martysl/open-cai  
 cd cai
 ```
 📋 2. Requirements
@@ -96,6 +96,6 @@ This project is licensed under the MIT License.
 
 ## Credits
 👨‍💻 Made by Marty with Help from TasiaGPT(our ai)
-Website: easierit.org
+Website: [easierit.org](https://main.easierit.org)
 Aditional Thx to: [PyCharacterAI](https://github.com/Xtr4F/PyCharacterAI)
 
