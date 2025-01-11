@@ -2,13 +2,14 @@
 
 **This project provides an OpenAI-style API endpoint to interact with Character.AI using the PyCharacterAI library. The API mimics OpenAI’s /v1/chat/completions endpoint, allowing developers to send and receive messages from Character.AI bots**.
 
-We not provide auth token you need got your own see how [here](https://github.com/Xtr4F/PyCharacterAI)  
+>[!NOTE]
+>We not provide auth token you need got your own see how [here](https://github.com/Xtr4F/PyCharacterAI)  
 
 ## Features:  
-- OpenAI-style endpoint (/v1/chat/completions)
-- Supports Character.AI characters
-- Easy to deploy on Vercel
-- Environment variable support for secure token management
+- [x] OpenAI-style endpoint (/v1/chat/completions)
+- [x] Supports Character.AI characters
+- [x] Easy to deploy on Vercel
+- [x] Environment variable support for secure token management
 
 ## Getting Started (localy)
 📦 1. Clone the Repository:  
@@ -35,15 +36,17 @@ Your API will be running at:
 http://localhost:5000/v1/chat/completions
 ```
 ## 📡 Deploy on Vercel
-🔧 1. Use Webpage interface add project using repo: https://github.com/martysl/cai
-🚀 2. Deploy to Vercel
-🔐 3. Set Environment Variables on Vercel
-Go to your Vercel Dashboard.
-Navigate to Settings > Environment Variables.
-Add the following variable:
-CHARACTERAI_AUTH_TOKEN	your_auth_token_here
-📥 API Endpoint Usage
-Send a POST request to the following endpoint:
+🔧 1. Use Webpage interface add project using repo: https://github.com/martysl/cai  
+🚀 2. Deploy to Vercel  
+🔐 3. Set Environment Variables on Vercel  
+- Go to your Vercel Dashboard.  
+- Navigate to Settings > Environment Variables.  
+- Add the following variable:  
+```
+your_auth_token_here ad CHARACTERAI_AUTH_TOKEN
+```
+📥 API Endpoint Usage  
+Send a POST request to the following endpoint:  
 ```
 POST https://your-project-name.vercel.app/v1/chat/completions
 ```
