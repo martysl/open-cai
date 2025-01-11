@@ -15,7 +15,7 @@
 📦 1. Clone the Repository:  
 ```
 git clone https://github.com/martysl/open-cai  
-cd cai
+cd open-cai
 ```
 📋 2. Requirements
 Install the necessary packages:
