@@ -1,6 +1,6 @@
 import os
 from flask import Flask, request, jsonify
-from characterai import PyCAI
+from PyCharacterAI import Client
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
