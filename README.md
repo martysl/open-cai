@@ -98,7 +98,7 @@ Feel free to submit issues or pull requests. Contributions are welcome!
 This project is licensed under the MIT License.
 
 ## Credits
-👨‍💻 Made by Marty with Help from TasiaGPT(our ai)
-Website: [easierit.org](https://main.easierit.org)
-Aditional Thx to: [PyCharacterAI](https://github.com/Xtr4F/PyCharacterAI)
+👨‍💻 Made by Marty with Help from TasiaGPT(our ai)  
+Website: [easierit.org](https://main.easierit.org)  
+Aditional Thx to: [PyCharacterAI](https://github.com/Xtr4F/PyCharacterAI) 
 
