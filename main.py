@@ -1,10 +1,10 @@
 import asyncio
 import os
-from quart import Quart, request, jsonify, render_template_string
+from flask import Flask, request, jsonify, render_template_string
 from PyCharacterAI import get_client
 from PyCharacterAI.exceptions import SessionClosedError, RequestError
 
-app = Quart(__name__)
+app = Flask(__name__)
 
 INDEX_HTML = """
 <!DOCTYPE html>
@@ -47,28 +47,46 @@ INDEX_HTML = """
 """
 
 @app.route('/')
-async def index():
-    return await render_template_string(INDEX_HTML)
+def index():
+    return render_template_string(INDEX_HTML)
 
 @app.route('/v1/chat/completions', methods=['POST'])
 async def chat_completions():
     data = await request.json
+    print(f"Received data: {data}")  # Debugging incoming data
+
     if not data or 'prompt' not in data or 'character_id' not in data:
         return jsonify({"error": "Invalid request"}), 400
 
     character_id = data['character_id']
     prompt = data['prompt']
-    token = os.getenv('CAI_TOKEN')
+    
+    # Get token from the environment variable
+    token = os.getenv('CHARACTERAI_AUTH_TOKEN')
+    if not token:
+        return jsonify({"error": "API token not found"}), 400
 
     try:
+        print("Initializing client...")
         client = await get_client(token=token)
+        print("Client initialized successfully.")
+
+        # Check if character_id is valid
+        print(f"Character ID: {character_id}")
+
         chat, greeting_message = await client.chat.create_chat(character_id)
+        print(f"Chat created: {chat.chat_id}")
+
         response_message = await safe_send_message(client, character_id, chat.chat_id, prompt)
         await client.close_session()
         return jsonify({"response": response_message}), 200
 
+    except SessionClosedError as e:
+        return jsonify({"error": f"Session closed: {str(e)}"}), 500
+    except RequestError as e:
+        return jsonify({"error": f"Request error: {str(e)}"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": f"Unknown error: {str(e)}"}), 500
 
 async def safe_send_message(client, character_id, chat_id, message, max_retries=5):
     retries = 0
@@ -84,11 +102,16 @@ async def safe_send_message(client, character_id, chat_id, message, max_retries=
 @app.route('/v1/images/generations', methods=['POST'])
 async def image_generation():
     data = await request.json
+    print(f"Received data: {data}")  # Debugging incoming data
     if not data or 'prompt' not in data:
         return jsonify({"error": "Invalid request"}), 400
 
     prompt = data['prompt']
-    token = os.getenv('CAI_TOKEN')
+    
+    # Get token from the environment variable
+    token = os.getenv('CHARACTERAI_AUTH_TOKEN')
+    if not token:
+        return jsonify({"error": "API token not found"}), 400
 
     try:
         client = await get_client(token=token)
