@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ⚙️ 3. Create a .env File
 Create a .env file in the project root to store your Character.AI authentication token:
 ```
-
+CHARACTERAI_AUTH_TOKEN=your_auth_token_here
 ```
 ▶️ 4. Run the API Locally
 Start the Flask server:
