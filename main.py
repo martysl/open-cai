@@ -1,23 +1,27 @@
 import os
 from flask import Flask, request, jsonify
-from PyCharacterAI import Client
+from PyCharacterAI import get_client
 from dotenv import load_dotenv
+import asyncio
 
 # Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
-client = PyCAI()
 
-# Get the auth token from the environment variable
-auth_token = os.getenv('CHARACTERAI_AUTH_TOKEN')
+# Initialize the CharacterAI client
+client = None
 
-# Ensure the token is set
-if not auth_token:
-    raise Exception("CHARACTERAI_AUTH_TOKEN is not set in the .env file")
+async def init_client():
+    global client
+    auth_token = os.getenv('CHARACTERAI_AUTH_TOKEN')
+    if not auth_token:
+        raise Exception("CHARACTERAI_AUTH_TOKEN is not set in the .env file")
+    client = await get_client(token=auth_token)
 
-# Login to Character AI
-client.start_jwt_session(auth_token=auth_token)
+# Initialize the client asynchronously
+loop = asyncio.get_event_loop()
+loop.run_until_complete(init_client())
 
 @app.route('/v1/chat/completions', methods=['POST'])
 def chat_completions():
@@ -35,7 +39,7 @@ def chat_completions():
     user_message = messages[-1]['content']
 
     # Send the message to Character.AI
-    response = client.chat.send_message(character_id, user_message)
+    response = loop.run_until_complete(client.chat.send_message(character_id, user_message))
 
     # Structure the response to mimic OpenAI's format
     return jsonify({
