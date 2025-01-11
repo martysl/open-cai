@@ -1,6 +1,7 @@
+#import stuff
 import os
 import asyncio
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template_string
 from PyCharacterAI import get_client
 from PyCharacterAI.exceptions import SessionClosedError
 from dotenv import load_dotenv
@@ -64,11 +65,11 @@ INDEX_HTML = """
 </html>
 """
 
-# Serve the index page
+
 @app.route('/')
 def index():
     return render_template_string(INDEX_HTML)
-
+# openapi app code
 @app.route('/v1/chat/completions', methods=['POST'])
 def chat_completions():
     data = request.json
