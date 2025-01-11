@@ -1,0 +1,3 @@
+Flask
+PyCharacterAI
+python-dotenv
