@@ -1,10 +1,10 @@
 import asyncio
 import os
-from flask import Flask, request, jsonify, render_template_string
+from quart import Quart, request, jsonify, render_template_string
 from PyCharacterAI import get_client
 from PyCharacterAI.exceptions import SessionClosedError, RequestError
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 INDEX_HTML = """
 <!DOCTYPE html>
@@ -47,12 +47,12 @@ INDEX_HTML = """
 """
 
 @app.route('/')
-def index():
-    return render_template_string(INDEX_HTML)
+async def index():
+    return await render_template_string(INDEX_HTML)
 
 @app.route('/v1/chat/completions', methods=['POST'])
 async def chat_completions():
-    data = request.json
+    data = await request.json
     if not data or 'prompt' not in data or 'character_id' not in data:
         return jsonify({"error": "Invalid request"}), 400
 
@@ -83,7 +83,7 @@ async def safe_send_message(client, character_id, chat_id, message, max_retries=
 
 @app.route('/v1/images/generations', methods=['POST'])
 async def image_generation():
-    data = request.json
+    data = await request.json
     if not data or 'prompt' not in data:
         return jsonify({"error": "Invalid request"}), 400
 
