@@ -13,8 +13,9 @@
 
 ## Getting Started (localy)
 >[!NOTE]
->Is assumed your system have already installed python and pip  
-Lets start:  
+>your system must have already installed python and pip  
+
+## Lets start:  
 📦 1. Clone the Repository:  
 ```
 git clone https://github.com/martysl/open-cai  
