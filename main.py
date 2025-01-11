@@ -59,7 +59,7 @@ INDEX_HTML = """
 <body>
     <div class="container">
         <h1>Open-cai</h1>
-        <p>by Marty with <span>♥</span> and little TasiaGpt</p>
+        <p>by Marty with <span>♥</span> and TasiaGpt</p>
     </div>
 </body>
 </html>
