@@ -1,4 +1,5 @@
 import os
+import json
 from flask import Flask, request, jsonify, render_template_string
 from PyCharacterAI import get_client
 from PyCharacterAI.exceptions import SessionClosedError, RequestError
@@ -79,7 +80,13 @@ async def chat_completions():
 
         response_message = await safe_send_message(client, character_id, chat.chat_id, prompt)
         await client.close_session()
-        return jsonify({"response": response_message}), 200
+        return app.response_class(
+            response=json.dumps({"response": response_message}, ensure_ascii=False),
+            status=200,
+            mimetype='application/json'
+        )
+
+
 
     except SessionClosedError as e:
         return jsonify({"error": f"Session closed: {str(e)}"}), 500
