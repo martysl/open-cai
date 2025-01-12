@@ -38,9 +38,9 @@ INDEX_HTML = """
 </head>
 <body>
     <div class="container">
-    <p><img src="https://i.imgur.com/IqU2nSn.png"></p>
-     <h1 style="color: green;">Open-cai</h1>
-     <p style="color: grey;"><small>Made by TasiaGPT and Marty with ♥ </small></p>
+    <p><img src="https://i.imgur.com/IqU2nSn.png" style="height: 350px; width: 100%;"></p>
+    <h1 style="color: green;">Open-cai</h1>
+    <p style="color: grey;"><small>Made by TasiaGPT and Marty with ♥ </small></p>
     </div>
 </body>
 </html>
